@@ -4,21 +4,11 @@ A **web-based remote video player** that lets you play remotly media files acros
 
 ## 🚀 Features
 
-- **Ontime Integration**: Trigger media via [ontime](https://github.com/cpvalente/ontime) events.
+- **Ontime Integration**: Trigger media via [ontime](https://github.com/cpvalente/ontime) events ([more infos](ontime-usage.md)).
 - **Multi-Player Support**: Connect to multiple players simultaneously with a smooth web interface.
 - **Versatile Media Playback**: Play **images**, **videos**, and **audio**.
 - **Simple Setup**: Easy to install and run with either a pre-built executable or via `npm`.
-
-### 🐾 **Supported Media Types**
-
-- **Images**: `.jpg`, `.png`, `.svg`, etc.
-- **Videos**: `.mp4`, `.avi`, `.mkv`, etc.
-- **Audio**: `.mp3`, `.wav`, etc.
-
-### 🔄 **Control Multiple Players**
-
-- **Simultaneous Playback**: You can control multiple players at once via the **Control Interface**.
-- **Web Interface**: The intuitive design allows you to see all connected players, start, pause, or change media on them instantly.
+- **Control Multiple Players**: You can connect and control multiple players at once.
 
 ---
 
@@ -27,23 +17,11 @@ A **web-based remote video player** that lets you play remotly media files acros
 ### 🏃‍♂️ **Run with Pre-built Executables**
 
 1. Download the appropriate executable for your platform:
-   - [Windows Executable](./release/windows/remote-media.exe) 💻
-   - [Linux Executable](./release/linux/remote-media) 🐧
+   - [Windows Executable](./releases/download/Pre-Build/remote-media_win.exe) 💻
+   - [Linux Executable](./releases/download/Pre-Build/remote-media_linux) 🐧
 2. Run the executable:
    - On **Windows**: Double-click `remote-media.exe`.
    - On **Linux**: Run the terminal command: `./remote-media` 🖥️.
-
-or run Pre-build via node.js
-
-```bash
-git clone https://github.com/unterdrueckt/remote-media
-```
-
-then run
-
-```bash
-node remote-media/release/node/server.js
-```
 
 This will start the server on `http://localhost:3000` by default! 🖥️
 
@@ -59,6 +37,29 @@ This will start the server on `http://localhost:3000` by default! 🖥️
 - 📺**Player Interface**: To add a media player, go to:  
    [http://127.0.0.1:3000/player/playerId](http://127.0.0.1:3000/player/playerId)
   Replace `playerId` with the **player ID** (you’ll see this in the control interface) to view and control that specific player.
+
+---
+
+## 🎬 **Media Playback**
+
+- By default, a **test image** will be available for playback.
+- To play **custom media files**, place them in:
+  - `~/Documents/remote-media/` (on most systems)
+  - Alternatively, point the **server's `server.contentPath`** setting in `config/main.conf` to your preferred media folder.
+
+---
+
+## ⚙️ **Configuration**
+
+- **Main Config File**: You can configure the server settings in `config/main.conf`.
+
+---
+
+### **Supported Media Types**
+
+- **Images**: `.jpg`, `.png`, `.svg`, etc.
+- **Videos**: `.mp4`, `.avi`, `.mkv`, etc.
+- **Audio**: `.mp3`, `.wav`, etc.
 
 ---
 
@@ -93,21 +94,6 @@ This will start the server on `http://localhost:3000` by default! 🖥️
    # or linux
    npm run build:linux
    ```
-
----
-
-## 🎬 **Media Playback**
-
-- By default, a **test image** will be available for playback.
-- To play **custom media files**, place them in:
-  - `~/Documents/remote-media/` (on most systems) 
-  - Alternatively, point the **server's `server.contentPath`** setting in `config/main.conf` to your preferred media folder.
-
----
-
-## ⚙️ **Configuration**
-
-- **Main Config File**: You can configure the server settings in `config/main.conf`.
 
 ---
 

@@ -16,36 +16,65 @@ const io = new Server(server, {
   cors: { origin: "*" },
 });
 
-if (!globalConfigManager.get("settings.contentDir")) {
-  const defContentDir = path.join(os.homedir(), "Documents", "remote-media");
-  const fallbackContentDir = path.join(__dirname, "remote-media");
+function getValidContentDir() {
+  let contentDir;
 
-  try {
-    fs.accessSync(defContentDir, fs.constants.W_OK);
-    console.log(
-      "No media content directory specified! Default to:",
-      defContentDir
-    );
-    fs.mkdirSync(defContentDir, { recursive: true });
-    globalConfigManager.set(
-      "settings.contentDir",
-      defContentDir,
-      "The media location"
-    );
-  } catch (err) {
-    console.warn(
-      `No write permissions to ${defContentDir} directory, falling back to ${fallbackContentDir}`
-    );
-    fs.mkdirSync(fallbackContentDir, { recursive: true });
-    globalConfigManager.set(
-      "settings.contentDir",
-      fallbackContentDir,
-      "The media location (FALLBACK USED)"
-    );
+  // Priority 1: User-specified directory
+  if (globalConfigManager.get("settings.contentDir")) {
+    contentDir = globalConfigManager.get("settings.contentDir") as string;
+    try {
+      fs.accessSync(contentDir, fs.constants.R_OK | fs.constants.W_OK);
+    } catch (err) {
+      console.warn(
+        `Error accessing user-specified directory: ${contentDir}.`,
+        err
+      );
+      contentDir = null;
+    }
   }
+
+  // Priority 2: Default directory within user's documents
+  if (!contentDir) {
+    const defaultDir = path.join(os.homedir(), "Documents", "remote-media");
+    try {
+      fs.accessSync(defaultDir, fs.constants.W_OK);
+      fs.mkdirSync(defaultDir, { recursive: true });
+      contentDir = defaultDir;
+    } catch (err) {
+      console.warn(
+        `Error accessing or creating default directory: ${defaultDir}.`,
+        err
+      );
+      contentDir = null;
+    }
+  }
+
+  // Priority 3: Fallback directory (within the application's directory)
+  if (!contentDir) {
+    const fallbackDir = path.join(__dirname, "remote-media");
+    try {
+      fs.accessSync(fallbackDir, fs.constants.W_OK);
+      fs.mkdirSync(fallbackDir, { recursive: true });
+      contentDir = fallbackDir;
+    } catch (err) {
+      console.error(
+        `Error accessing or creating fallback directory: ${fallbackDir}.`,
+        err
+      );
+      throw new Error("Unable to find a suitable content directory.");
+    }
+  }
+
+  globalConfigManager.set(
+    "settings.contentDir",
+    contentDir,
+    "The media location"
+  );
+
+  return contentDir;
 }
 
-const contentPath = globalConfigManager.get("settings.contentDir") as string;
+const contentPath = getValidContentDir();
 
 app.use("/content", contentRouter(contentPath));
 app.use("/assets", express.static(path.join(__dirname, "static/assets")));
@@ -64,7 +93,7 @@ initializeOntime();
 
 // Start server
 const serverPort = globalConfigManager.get("settings.serverPort") || 3000;
-const localIP = ip.address()
+const localIP = ip.address();
 const controlURL = `http://${localIP}:${serverPort}/control`;
 const playerURL = `http://${localIP}:${serverPort}/player/<id>`;
 

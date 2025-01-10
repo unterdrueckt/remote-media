@@ -6,16 +6,36 @@ export let contentList: string[] = [];
 
 export function initializeContentIndexing(io: Server, contentPath: string) {
   const indexContent = (resend = false) => {
-    fs.readdir(contentPath, (err, files) => {
+    fs.access(contentPath, (err) => {
       if (err) {
-        console.error("Error reading content folder:", err);
-      } else {
-        files.push("Test-Image.svg")
-        if (resend || JSON.stringify(contentList) !== JSON.stringify(files)) {
-          console.log("New files in media found");
-          contentList = files;
-          io.emit("contentList", contentList);
+        if (err.code === "ENOENT") {
+          // If the directory doesn't exist, create it
+          fs.mkdir(contentPath, { recursive: true }, (err) => {
+            if (err) {
+              console.error("Error creating content folder:", err);
+            } else {
+              console.log("Content folder created successfully:", contentPath);
+            }
+          });
+        } else {
+          console.error("Error accessing content folder:", err);
         }
+      } else {
+        fs.readdir(contentPath, (err, files) => {
+          if (err) {
+            console.error("Error reading content folder:", err);
+          } else {
+            files.push("Test-Image.svg");
+            if (
+              resend ||
+              JSON.stringify(contentList) !== JSON.stringify(files)
+            ) {
+              console.log("New files in media found.");
+              contentList = files;
+              io.emit("contentList", contentList);
+            }
+          }
+        });
       }
     });
   };
@@ -28,12 +48,11 @@ export function initializeContentIndexing(io: Server, contentPath: string) {
 export function contentRouter(contentPath: string) {
   const router = require("express").Router();
 
-  
   router.get("/*", (req: Request, res: Response) => {
     let filePath = path.join(contentPath, req.url);
-    if(req.url == '/Test-Image.svg') {
+    if (req.url == "/Test-Image.svg") {
       const rootDir = process.cwd();
-      filePath = path.join(rootDir, "static","Test-Image.svg")
+      filePath = path.join(rootDir, "static", "Test-Image.svg");
     }
     fs.access(filePath, fs.constants.F_OK, (err) => {
       if (!err) {
