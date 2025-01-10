@@ -17,8 +17,8 @@ A **web-based remote video player** that lets you play remotly media files acros
 ### 🏃‍♂️ **Run with Pre-built Executables**
 
 1. Download the appropriate executable for your platform:
-   - [Windows Executable](./releases/download/Pre-Build/remote-media_win.exe) 💻
-   - [Linux Executable](./releases/download/Pre-Build/remote-media_linux) 🐧
+   - [Windows Executable](https://github.com/unterdrueckt/remote-media/releases/download/Pre-Build/remote-media_win.exe) 💻
+   - [Linux Executable](https://github.com/unterdrueckt/remote-media/releases/download/Pre-Build/remote-media_linux) 🐧
 2. Run the executable:
    - On **Windows**: Double-click `remote-media.exe`.
    - On **Linux**: Run the terminal command: `./remote-media` 🖥️.
